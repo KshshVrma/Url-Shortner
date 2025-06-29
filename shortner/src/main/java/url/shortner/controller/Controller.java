@@ -1,6 +1,7 @@
 package url.shortner.controller;
 
 import org.springframework.web.bind.annotation.*;
+import url.shortner.Service.Store;
 
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import static java.lang.System.in;
 @RestController
 @RequestMapping("hello")
 public class Controller {
+    Store store=new Store();
 
     @GetMapping("getworld")
     String fun(){
@@ -18,8 +20,13 @@ public class Controller {
     @GetMapping("geturl")
     String getUrl(@RequestParam("url") String input){
         String temp="";
-        for(int i=0;i<5;i++){
-            temp+="wow-";
+        if(input==null || input.isEmpty()){
+            return "Please provide a valid URL";
+        }else{
+            temp = store.getFromRedis(input);
+            if(temp.equals("URL not found")){
+                return "URL not found in the store";
+            }
         }
         return temp;
 
@@ -30,11 +37,9 @@ public class Controller {
         int count=0;
         String ans="";
         for(Map.Entry<String,String> p : k.entrySet()){
-
-                ans+=p.getKey();
-                ans+="|";
-                ans+=p.getValue();
+store.addUrl(p.getKey(), p.getValue());
             }
+        ans=store.addToRed();
 
         return ans;
     }
