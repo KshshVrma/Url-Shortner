@@ -44,6 +44,15 @@ store.addUrl(p.getKey(), p.getValue());
         return ans;
     }
 
+    @DeleteMapping("deleteurl")
+    String deleteUrl(@RequestParam("url") String input){
+        if(input==null || input.isEmpty()){
+            return "Please provide a valid URL";
+        }
+        String ans=store.deleteFromRedis(input);
+        return ans;
+    }
+
 
 
 }

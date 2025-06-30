@@ -7,6 +7,7 @@ public class Store {
 
     private addToRedis redisService = addToRedis.getInstance();
 
+
     private String getUrl(String key){
 
         if(urlStore.containsKey(key)){
@@ -45,6 +46,14 @@ public class Store {
     public String addToRed() {
 
         String response = redisService.addToRed(urlStore);
+        return response;
+    }
+
+    public String deleteFromRedis(String key) {
+        String response = redisService.deleteFromRedis(key);
+        if(response.equals("Key deleted successfully")){
+            deleteUrl(key);
+        }
         return response;
     }
 
