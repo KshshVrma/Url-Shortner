@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h1>URL Shortener API</h1>
+
+<!-- GET request to /hello/getworld -->
+<form id="getWorldForm">
+    <h2>Get World</h2>
+    <button type="button" onclick="getWorld()">Send GET Request</button>
+</form>
+
+<!-- GET request to /hello/geturl -->
+<form id="getUrlForm">
+    <h2>Get URL</h2>
+    <label for="url">Enter URL:</label>
+    <input type="text" id="url" name="url" placeholder="Enter URL">
+    <button type="button" onclick="getUrl()">Send GET Request</button>
+</form>
+
+<!-- POST request to /hello/addurl -->
+<form id="addUrlForm">
+    <h2>Add URL</h2>
+    <label for="jsonData">Enter JSON Data:</label>
+    <textarea id="jsonData" name="jsonData" rows="5" placeholder='{"key1":"value1", "key2":"value2"}'></textarea>
+    <button type="button" onclick="addUrl()">Send POST Request</button>
+</form>
+
+<script>
+    const baseUrl = "http://localhost:8080/hello";
+
+    function getWorld() {
+        fetch(`${baseUrl}/getworld`)
+            .then(response => response.text())
+            .then(data => alert(`Response: ${data}`))
+            .catch(error => alert(`Error: ${error}`));
+    }
+
+    function getUrl() {
+        const url = document.getElementById("url").value;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+        fetch(`${baseUrl}/geturl?url=${encodeURIComponent(url)}`)
+            .then(response => response.text())
+            .then(data => alert(`Response: ${data}`))
+            .catch(error => alert(`Error: ${error}`));
+    }
+
+    function addUrl() {
+        const jsonData = document.getElementById("jsonData").value;
+        if (!jsonData) {
+            alert("Please enter JSON data.");
+            return;
+        }
+        fetch(`${baseUrl}/addurl`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: jsonData
+        })
+            .then(response => response.text())
+            .then(data => alert(`Response: ${data}`))
+            .catch(error => alert(`Error: ${error}`));
+    }
+</script>
+</body>
+</html>
