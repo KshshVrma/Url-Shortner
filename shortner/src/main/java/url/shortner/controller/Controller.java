@@ -1,8 +1,11 @@
 package url.shortner.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import url.shortner.Service.Store;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static java.lang.System.in;
@@ -11,6 +14,8 @@ import static java.lang.System.in;
 @RequestMapping("hello")
 public class Controller {
     Store store=new Store();
+    @Autowired
+    TestTemplate testTemplate;
 
     @GetMapping("getworld")
     String fun(){
@@ -53,6 +58,30 @@ store.addUrl(p.getKey(), p.getValue());
         return ans;
     }
 
+    @GetMapping("request")
+    String redirect(@RequestParam("url") String input) {
+        if (input == null || input.isEmpty()) {
+            return "Please provide a valid URL";
+        }
+        String temp = store.getFromRedis(input);
+        if (temp.equals("URL not found")) {
+            return "URL not found in the store";
+        }
+        return testTemplate.get(temp);
+    }
+    @GetMapping("redirect")
+    void redirect(@RequestParam("url") String input, HttpServletResponse response) throws IOException, IOException {
+        if (input == null || input.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Please provide a valid URL");
+            return;
+        }
+        String temp = store.getFromRedis(input);
+        if (temp.equals("URL not found")) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "URL not found in the store");
+            return;
+        }
+        response.sendRedirect(temp); // Redirect to the URL stored in temp
+    }
 
 
 }
